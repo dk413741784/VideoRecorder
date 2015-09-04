@@ -48,15 +48,16 @@
 
 package com.qd.recorder;
 
-import com.googlecode.javacpp.BytePointer;
-import com.googlecode.javacpp.DoublePointer;
-import com.googlecode.javacpp.FloatPointer;
-import com.googlecode.javacpp.IntPointer;
-import com.googlecode.javacpp.Loader;
-import com.googlecode.javacpp.Pointer;
-import com.googlecode.javacpp.PointerPointer;
-import com.googlecode.javacpp.ShortPointer;
-import com.googlecode.javacv.FrameRecorder;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.javacpp.FloatPointer;
+import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.PointerPointer;
+import org.bytedeco.javacpp.ShortPointer;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameRecorder;
 
 import java.io.File;
 import java.nio.Buffer;
@@ -68,12 +69,12 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Map.Entry;
 
-import static com.googlecode.javacv.cpp.avcodec.*;
-import static com.googlecode.javacv.cpp.avformat.*;
-import static com.googlecode.javacv.cpp.avutil.*;
-import static com.googlecode.javacv.cpp.opencv_core.*;
-import static com.googlecode.javacv.cpp.swresample.*;
-import static com.googlecode.javacv.cpp.swscale.*;
+import static org.bytedeco.javacpp.avcodec.*;
+import static org.bytedeco.javacpp.avformat.*;
+import static org.bytedeco.javacpp.avutil.*;
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.swresample.*;
+import static org.bytedeco.javacpp.swscale.*;
 
 /**
  *
@@ -89,10 +90,10 @@ public class FFmpegFrameRecorder extends FrameRecorder {
             throw loadingException;
         } else {
             try {
-                Loader.load(com.googlecode.javacv.cpp.avutil.class);
-                Loader.load(com.googlecode.javacv.cpp.avcodec.class);
-                Loader.load(com.googlecode.javacv.cpp.avformat.class);
-                Loader.load(com.googlecode.javacv.cpp.swscale.class);
+                Loader.load(org.bytedeco.javacpp.avutil.class);
+                Loader.load(org.bytedeco.javacpp.avcodec.class);
+                Loader.load(org.bytedeco.javacpp.avformat.class);
+                Loader.load(org.bytedeco.javacpp.swscale.class);
             } catch (Throwable t) {
                 if (t instanceof Exception) {
                     throw loadingException = (Exception)t;
@@ -146,7 +147,7 @@ public class FFmpegFrameRecorder extends FrameRecorder {
         this.audio_pkt = new AVPacket();
     }
     public void release() throws Exception {
-        synchronized (com.googlecode.javacv.cpp.avcodec.class) {
+        synchronized (org.bytedeco.javacpp.avcodec.class) {
             releaseUnsafe();
         }
     }
@@ -265,7 +266,7 @@ public class FFmpegFrameRecorder extends FrameRecorder {
     }
 
     public void start() throws Exception {
-        synchronized (com.googlecode.javacv.cpp.avcodec.class) {
+        synchronized (org.bytedeco.javacpp.avcodec.class) {
             startUnsafe();
         }
     }
@@ -727,7 +728,10 @@ public class FFmpegFrameRecorder extends FrameRecorder {
         return picture.key_frame() != 0;
     }
 
-    @Override public boolean record(int sampleRate, Buffer ... samples) throws Exception {
+    @Override
+    public void record(Frame pFrame) throws Exception {
+        int sampleRate = pFrame.sampleRate;
+        Buffer [] samples = pFrame.samples;
         if (audio_st == null) {
             throw new Exception("No audio output stream (Is audioChannels > 0 and has start() been called?)");
         }
@@ -850,7 +854,7 @@ public class FFmpegFrameRecorder extends FrameRecorder {
                 record(frame);
             }
         }
-        return frame.key_frame() != 0;
+//        return frame.key_frame() != 0;
     }
 
     boolean record(AVFrame frame) throws Exception {

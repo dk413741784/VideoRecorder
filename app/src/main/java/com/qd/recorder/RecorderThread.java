@@ -3,8 +3,8 @@ package com.qd.recorder;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.googlecode.javacv.FrameRecorder;
-import com.googlecode.javacv.cpp.opencv_core;
+import org.bytedeco.javacv.FrameRecorder;
+import org.bytedeco.javacpp.opencv_core;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;

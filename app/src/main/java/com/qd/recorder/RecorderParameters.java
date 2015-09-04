@@ -2,7 +2,7 @@ package com.qd.recorder;
 
 import android.os.Build;
 
-import com.googlecode.javacv.cpp.avcodec;
+import org.bytedeco.javacpp.avcodec;
 
 public class RecorderParameters {
 

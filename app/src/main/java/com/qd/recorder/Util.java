@@ -1,7 +1,7 @@
 package com.qd.recorder;
 
-import static com.googlecode.javacv.cpp.opencv_highgui.cvCreateFileCapture;
-import static com.googlecode.javacv.cpp.opencv_highgui.cvQueryFrame;
+import static org.bytedeco.javacpp.opencv_videoio.cvCreateFileCapture;
+import static org.bytedeco.javacpp.opencv_videoio.cvQueryFrame;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -41,8 +41,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_highgui.CvCapture;
+import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacpp.opencv_videoio.CvCapture;
 import com.qd.videorecorder.R;
 
 

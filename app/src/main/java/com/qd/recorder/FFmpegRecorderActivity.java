@@ -1,6 +1,6 @@
 package com.qd.recorder;
 
-import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
+import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,8 +59,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.googlecode.javacv.FrameRecorder;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameRecorder;
+import org.bytedeco.javacpp.opencv_core.IplImage;
 import com.qd.recorder.ProgressView.State;
 import com.qd.videorecorder.R;
 
@@ -236,13 +237,14 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 			}
 		};
 	}
-	
-	//neon库对opencv做了优化
-	static {
-		System.loadLibrary("checkneon");
-	}
 
-	public native static int  checkNeonFromJNI();
+//	//neon库对opencv做了优化
+//	static {
+//		System.loadLibrary("checkneon");
+//	}
+//
+//	public native static int  checkNeonFromJNI();
+
 	private boolean initSuccess = false;
 
 	@Override
@@ -666,7 +668,10 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 				if (videoRecorder != null)
 				{
 					this.mCount += shortBuffer.limit();
-					videoRecorder.record(0,new Buffer[] {shortBuffer});
+					Frame pFrame = new Frame();
+					pFrame.sampleRate = 0;
+					pFrame.samples = new Buffer[] {shortBuffer};
+					videoRecorder.record(pFrame);
 				}
 			}catch (FrameRecorder.Exception localException){
 
@@ -1253,7 +1258,7 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 			videoRecorder.stop();
 			videoRecorder.release();
 			}
-		} catch (com.googlecode.javacv.FrameRecorder.Exception e) {
+		} catch (org.bytedeco.javacv.FrameRecorder.Exception e) {
 			e.printStackTrace();
 		}
 		
