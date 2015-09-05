@@ -3,16 +3,19 @@ package com.qd.recorder;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.bytedeco.javacpp.avutil;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
 import org.bytedeco.javacpp.opencv_core;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RecorderThread extends Thread{
 
     private opencv_core.IplImage mYuvIplImage;
-    private NewFFmpegFrameRecorder mVideoRecorder;
+    private FFmpegFrameRecorder mVideoRecorder;
     private ByteBuffer mByteBuffer;
     private FFmpegRecorderActivity.AsyncStopRecording mAsyncTask;
 
@@ -26,7 +29,7 @@ public class RecorderThread extends Thread{
     private int mTotalFrame = 180;
 
 
-    public RecorderThread(opencv_core.IplImage yuvIplImage,NewFFmpegFrameRecorder videoRecorder,int size,int frame){
+    public RecorderThread(opencv_core.IplImage yuvIplImage,FFmpegFrameRecorder videoRecorder,int size,int frame){
         this.mYuvIplImage = yuvIplImage;
         this.mVideoRecorder = videoRecorder;
         this.mSize = size;
@@ -62,7 +65,16 @@ public class RecorderThread extends Thread{
                     mYuvIplImage.getByteBuffer().put(mBytes);
 
                     try {
-                        mVideoRecorder.record(mYuvIplImage);
+                        int width = mYuvIplImage.width();
+                        int height = mYuvIplImage.height();
+                        int depth = mYuvIplImage.depth();
+                        int channels = mYuvIplImage.nChannels();
+                        int stride = mYuvIplImage.widthStep() * 8 / Math.abs(depth);
+                        Buffer[] image = new Buffer[]{};
+                        if(mYuvIplImage.imageData()!=null) {
+                            image = new Buffer[]{mYuvIplImage.imageData().asBuffer()};
+                        }
+                        mVideoRecorder.recordImage(width, height, depth, channels, stride, avutil.AV_PIX_FMT_NONE, image);
                     } catch (FrameRecorder.Exception e) {
                         Log.i("recorder", "录制错误" + e.getMessage());
                         e.printStackTrace();

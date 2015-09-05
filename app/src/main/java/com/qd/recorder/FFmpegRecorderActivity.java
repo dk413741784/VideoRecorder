@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +58,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameRecorder;
 import org.bytedeco.javacpp.opencv_core.IplImage;
@@ -95,7 +95,7 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 	boolean nextEnabled = false;
 	
 	//录制视频和保存音频的类
-	private volatile NewFFmpegFrameRecorder videoRecorder;
+	private volatile FFmpegFrameRecorder videoRecorder;
 	
 	//判断是否是前置摄像头
 	private boolean isPreviewOn = false;
@@ -457,7 +457,7 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 		frameTime = (1000000L / frameRate);
 		
 		fileVideoPath = new File(strVideoPath); 
-		videoRecorder = new NewFFmpegFrameRecorder(strVideoPath, 480, 480, 1);
+		videoRecorder = new FFmpegFrameRecorder(strVideoPath, 480, 480, 1);
 		videoRecorder.setFormat(recorderParameters.getVideoOutputFormat());
 		videoRecorder.setSampleRate(recorderParameters.getAudioSamplingRate());
 		videoRecorder.setFrameRate(recorderParameters.getVideoFrameRate());
@@ -473,12 +473,10 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 	}
 
 	public void startRecording() {
-
 		try {
 			videoRecorder.start();
 			audioThread.start();
-
-		} catch (NewFFmpegFrameRecorder.Exception e) {
+		} catch (FFmpegFrameRecorder.Exception e) {
 			e.printStackTrace();
 		}
 	}
