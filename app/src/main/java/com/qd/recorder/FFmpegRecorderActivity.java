@@ -1,7 +1,5 @@
 package com.qd.recorder;
 
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +59,6 @@ import android.widget.TextView;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameRecorder;
-import org.bytedeco.javacpp.opencv_core.IplImage;
 import com.qd.recorder.ProgressView.State;
 import com.qd.videorecorder.R;
 
@@ -121,8 +118,6 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 	private Camera cameraDevice;
 	private CameraView cameraView;
 	Parameters cameraParameters = null;
-	//IplImage对象,用于存储摄像头返回的byte[]，以及图片的宽高，depth，channel等
-	private IplImage yuvIplImage = null;
 	//分别为 默认摄像头（后置）、默认调用摄像头的分辨率、被选择的摄像头（前置或者后置）
 	int defaultCameraId = -1, defaultScreenResolution = -1 , cameraSelection = 0;
 
@@ -381,7 +376,10 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 
 				handleSurfaceChanged();
 				if(recorderThread == null) {
-					recorderThread = new RecorderThread(yuvIplImage, videoRecorder, previewHeight * previewWidth * 3 / 2,frameRate*(recordingTime/1000));
+					recorderThread = new RecorderThread(
+							new RecorderThread.VideoMeteInfo(previewHeight, previewWidth),
+							videoRecorder, previewHeight * previewWidth * 3 / 2,
+							frameRate*(recordingTime/1000));
 					recorderThread.start();
 				}
 				//设置surface的宽高
@@ -942,7 +940,7 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 			//录制视频
 			if (recording && rec){
 				if(lastSavedframe != null
-					&& lastSavedframe.getFrameBytesData() != null && yuvIplImage != null) {
+					&& lastSavedframe.getFrameBytesData() != null /*&& yuvIplImage != null*/) {
 					//保存某一幀的图片
 					if (isFirstFrame) {
 						isFirstFrame = false;
@@ -1076,9 +1074,6 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 
 		//设置预览帧率
 		cameraParameters.setPreviewFrameRate(frameRate);
-		//构建一个IplImage对象，用于录制视频
-		//和opencv中的cvCreateImage方法一样
-		yuvIplImage = IplImage.create(previewHeight, previewWidth,IPL_DEPTH_8U, 2);
 
 		//系统版本为8一下的不支持这种对焦
 		if(Build.VERSION.SDK_INT >  Build.VERSION_CODES.FROYO)
@@ -1259,8 +1254,7 @@ public class FFmpegRecorderActivity extends Activity implements OnClickListener,
 		} catch (org.bytedeco.javacv.FrameRecorder.Exception e) {
 			e.printStackTrace();
 		}
-		
-		yuvIplImage = null;
+
 		videoRecorder = null;
 		lastSavedframe = null;
 		

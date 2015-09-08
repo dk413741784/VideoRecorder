@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RecorderThread extends Thread{
 
-    private opencv_core.IplImage mYuvIplImage;
+    private VideoMeteInfo videoMeteInfo;
     private FFmpegFrameRecorder mVideoRecorder;
     private ByteBuffer mByteBuffer;
     private FFmpegRecorderActivity.AsyncStopRecording mAsyncTask;
@@ -29,12 +29,12 @@ public class RecorderThread extends Thread{
     private int mTotalFrame = 180;
 
 
-    public RecorderThread(opencv_core.IplImage yuvIplImage,FFmpegFrameRecorder videoRecorder,int size,int frame){
-        this.mYuvIplImage = yuvIplImage;
+    public RecorderThread(VideoMeteInfo videoMeteInfo,FFmpegFrameRecorder videoRecorder,int size,int frame){
+        this.videoMeteInfo = videoMeteInfo;
         this.mVideoRecorder = videoRecorder;
         this.mSize = size;
-        mTotalFrame = frame;
-        mTime = new long[mTotalFrame];
+        this.mTotalFrame = frame;
+        this.mTime = new long[mTotalFrame];
     }
 
     public void putByteData(SavedFrames lastSavedframe){
@@ -62,19 +62,14 @@ public class RecorderThread extends Thread{
 
                     pos += mSize;
                     mVideoRecorder.setTimestamp(mTime[timeIndex++]);
-                    mYuvIplImage.getByteBuffer().put(mBytes);
-
                     try {
-                        int width = mYuvIplImage.width();
-                        int height = mYuvIplImage.height();
-                        int depth = mYuvIplImage.depth();
-                        int channels = mYuvIplImage.nChannels();
-                        int stride = mYuvIplImage.widthStep() * 8 / Math.abs(depth);
-                        Buffer[] image = new Buffer[]{};
-                        if(mYuvIplImage.imageData()!=null) {
-                            image = new Buffer[]{mYuvIplImage.imageData().asBuffer()};
-                        }
-                        mVideoRecorder.recordImage(width, height, depth, channels, stride, avutil.AV_PIX_FMT_NONE, image);
+                        Buffer[] image = new Buffer[]{ ByteBuffer.wrap(mBytes)};
+                        mVideoRecorder.recordImage(videoMeteInfo.width,
+                                videoMeteInfo.height,
+                                videoMeteInfo.depth,
+                                videoMeteInfo.channels,
+                                videoMeteInfo.stride,
+                                avutil.AV_PIX_FMT_NONE, image);
                     } catch (FrameRecorder.Exception e) {
                         Log.i("recorder", "录制错误" + e.getMessage());
                         e.printStackTrace();
@@ -122,12 +117,40 @@ public class RecorderThread extends Thread{
 
     private void release(){
         mAsyncTask = null;
-        mYuvIplImage = null;
         mVideoRecorder = null;
         if(mByteBuffer != null){
             mByteBuffer.clear();
         }
         mByteBuffer = null;
         mIndex = 0;
+    }
+
+    public static class VideoMeteInfo{
+
+        private int width;
+        private int height;
+        private int depth;
+        private int channels;
+        private int stride;
+
+        public VideoMeteInfo(int width, int height) {
+            this(width, height, opencv_core.IPL_DEPTH_8U, 2);
+        }
+
+        public VideoMeteInfo(int width, int height, int depth, int channels) {
+            this.width = width;
+            this.height = height;
+            this.depth = depth;
+            this.channels = channels;
+            this.stride =  width * 8 / Math.abs(depth);
+        }
+
+        public VideoMeteInfo(int width, int height, int depth, int channels, int stride) {
+            this.width = width;
+            this.height = height;
+            this.depth = depth;
+            this.channels = channels;
+            this.stride = stride;
+        }
     }
 }
