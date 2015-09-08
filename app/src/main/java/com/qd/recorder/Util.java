@@ -1,8 +1,5 @@
 package com.qd.recorder;
 
-import static org.bytedeco.javacpp.opencv_videoio.cvCreateFileCapture;
-import static org.bytedeco.javacpp.opencv_videoio.cvQueryFrame;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,8 +38,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacpp.opencv_videoio.CvCapture;
 import com.qd.videorecorder.R;
 
 
@@ -388,7 +383,7 @@ public class Util {
 	 * 
 	 * @param context
 	 *            :Context 传入当前调用该方法的activity实例
-	 * @param msg
+	 * @paramtitle
 	 *            :String 要显示的显示文字
 	 * @param type
 	 *            :int 显示类型1：仅为确定，2：有“确定”、“取消”两个操作
@@ -461,10 +456,5 @@ public class Util {
 		dialog.setCanceledOnTouchOutside(true);// 点击外部关闭
 		dialog.show();
 	}
-	
-	public IplImage getFrame(String filePath){
-		CvCapture capture = cvCreateFileCapture(filePath);
-		IplImage image = cvQueryFrame(capture);
-		return image;
-	}
+
 }

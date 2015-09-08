@@ -6,7 +6,6 @@ import android.util.Log;
 import org.bytedeco.javacpp.avutil;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
-import org.bytedeco.javacpp.opencv_core;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -134,7 +133,7 @@ public class RecorderThread extends Thread{
         private int stride;
 
         public VideoMeteInfo(int width, int height) {
-            this(width, height, opencv_core.IPL_DEPTH_8U, 2);
+            this(width, height, 8/*opencv_core.IPL_DEPTH_8U*/, 2);
         }
 
         public VideoMeteInfo(int width, int height, int depth, int channels) {
