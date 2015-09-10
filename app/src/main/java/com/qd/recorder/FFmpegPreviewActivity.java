@@ -23,7 +23,6 @@ public class FFmpegPreviewActivity extends Activity implements TextureView.Surfa
 	,OnClickListener,OnCompletionListener{
 
 	private String path;
-	//
 	private TextureView surfaceView;
 	private Button cancelBtn;
 	private MediaPlayer mediaPlayer;
