@@ -9,7 +9,7 @@
         android:id="@+id/recorder_flashlight_parent"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="#222222" >
+        android:background="#222222">
 
         <Button
             android:id="@+id/recorder_flashlight"
@@ -38,31 +38,33 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-    <RelativeLayout
-        android:id="@+id/recorder_surface_parent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <SurfaceView
+        <RelativeLayout
+            android:id="@+id/recorder_surface_parent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/preview_video_parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" >
+            android:layout_height="match_parent">
 
-        <TextureView
-            android:id="@+id/preview_video"
+            <SurfaceView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/preview_video_parent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextureView
+                android:id="@+id/preview_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
     </RelativeLayout>
-    </RelativeLayout>
+
     <FrameLayout
+        android:id="@+id/recorder_progress_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/recorder_surface_parent_layout">
+        android:layout_height="wrap_content">
 
 
         <com.qd.recorder.ProgressView
@@ -88,68 +90,54 @@
         android:id="@+id/recorder_bottom"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@drawable/sc_recorder_bottom_bg"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/sc_recorder_bottom_bg">
 
-        <Button
-            android:id="@+id/sc_recorder_start_btn"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/sc_recorde_start"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"/>
-
-        <Button
-            android:id="@+id/sc_recorder_replay_btn"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/sc_recorde_replay"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/sc_recorder_des"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/sc_recorder_start_btn"
-            android:layout_marginTop="20dp"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF"
-            android:text="点击拍摄"/>
-        <LinearLayout
-            android:id="@+id/sc_recorder_btn_layout"
+        <RelativeLayout
+            android:id="@+id/sc_recorder_start_btn_parent"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:layout_height="110dp"
+            android:layout_centerVertical="true">
 
             <Button
                 android:id="@+id/recorder_cancel"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="#3a3a3a"
-                android:text="重拍"
-                android:textColor="#ffffff"
-                android:textSize="18dp" />
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:background="#5a5a5a"/>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/record_delete_vedio"
+                android:visibility="gone"/>
+
+            <RelativeLayout
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_centerHorizontal="true">
+
+                <Button
+                    android:id="@+id/sc_recorder_start_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/sc_recorde_start" />
+
+                <Button
+                    android:id="@+id/sc_recorder_replay_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/sc_recorde_replay"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <Button
                 android:id="@+id/recorder_next"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="#3a3a3a"
-                android:text="使用视频"
-                android:textColor="#ffffff"
-                android:textSize="18dp" />
-        </LinearLayout>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/record_use_vedio"
+                android:visibility="gone"/>
+        </RelativeLayout>
     </RelativeLayout>
 
     <ImageView
@@ -161,6 +149,6 @@
         android:clickable="false"
         android:focusable="false"
         android:scaleType="center"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </LinearLayout>

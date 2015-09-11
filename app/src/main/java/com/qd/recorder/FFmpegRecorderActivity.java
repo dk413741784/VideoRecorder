@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ShortBuffer;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -183,10 +184,14 @@ public class FFmpegRecorderActivity extends Activity implements TextureView.Surf
 	private MediaPlayer mediaPlayer;
 	private RelativeLayout preview_video_parent;
 	private Button startBtn;
-	private TextView tvRecordesDes;
 	private Button replayBtn;
 	private boolean isReplaying;
-	private View btnLayout;
+	private View progressLayout;
+	private Button cancelBtn;
+	private Button confirmBtn;
+	private boolean isRecording;
+	private TextView tvTime;
+	private SimpleDateFormat formatter;
 	private void initHandler(){
 		mHandler = new Handler(){
 			@Override
@@ -207,7 +212,6 @@ public class FFmpegRecorderActivity extends Activity implements TextureView.Surf
 					break;
 				case 3:
 					startBtn.setBackgroundResource(R.drawable.sc_recorde_recording);
-					tvRecordesDes.setText("拍摄中");
 					//初始化Formatter的转换格式
 					if(!recording)
 						initiateRecording(true);
@@ -220,11 +224,11 @@ public class FFmpegRecorderActivity extends Activity implements TextureView.Surf
 					rec = true;
 					//开始进度条增长
 					progressView.setCurrentState(State.START);
+					mHandler.sendEmptyMessage(6);
 					//setTotalVideoTime();
 				break;
 				case 4:
 					startBtn.setBackgroundResource(R.drawable.sc_recorde_start);
-					tvRecordesDes.setText("点击拍摄");
 					//设置进度条暂停状态
 					progressView.setCurrentState(State.PAUSE);
 					//将暂停的时间戳添加到进度条的队列中
@@ -243,6 +247,12 @@ public class FFmpegRecorderActivity extends Activity implements TextureView.Surf
 					currentRecorderState = RecorderState.SUCCESS;
 					mHandler.sendEmptyMessage(2);
 					break;
+					case 6:
+						if(!(totalTime >= recordingMinimumTime)&&isRecording){
+							tvTime.setText(formatter.format(recordingTime - totalTime));
+							mHandler.sendEmptyMessageDelayed(6, 1000);
+						}
+						break;
 				default:
 					break;
 				}
@@ -251,7 +261,7 @@ public class FFmpegRecorderActivity extends Activity implements TextureView.Surf
 	}
 
 //	//neon库对opencv做了优化
-//	static {
+//	static { 
 //		System.loadLibrary("checkneon");
 //	}
 //
@@ -350,15 +360,20 @@ public class FFmpegRecorderActivity extends Activity implements TextureView.Surf
 		topLayout = (RelativeLayout) findViewById(R.id.recorder_surface_parent);
 		startBtn = (Button) findViewById(R.id.sc_recorder_start_btn);
 		startBtn.setOnTouchListener(this);
-		tvRecordesDes = (TextView) findViewById(R.id.sc_recorder_des);
 		replayBtn = (Button) findViewById(R.id.sc_recorder_replay_btn);
 		replayBtn.setOnClickListener(this);
+		cancelBtn = (Button) findViewById(R.id.recorder_cancel);
+		confirmBtn = (Button) findViewById(R.id.recorder_next);
+
+		tvTime = (TextView) findViewById(R.id.recorder_progress_text);
+		formatter = new SimpleDateFormat("mm:ss");
+		tvTime.setText(formatter.format(recordingTime));
 		
 		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
 			switchCameraIcon.setVisibility(View.VISIBLE);
 		}
 		initCameraLayout();
-		btnLayout = findViewById(R.id.sc_recorder_btn_layout);
+		progressLayout = findViewById(R.id.recorder_progress_parent);
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 		surfaceView = (TextureView) findViewById(R.id.preview_video);
@@ -1062,13 +1077,15 @@ public class FFmpegRecorderActivity extends Activity implements TextureView.Surf
 				if(totalTime< recordingTime){
 					switch (event.getAction()) {
 						case MotionEvent.ACTION_DOWN:
+							isRecording = true;
 							//如果MediaRecorder没有被初始化
 							//执行初始化
 							mHandler.removeMessages(3);
 							mHandler.removeMessages(4);
-							mHandler.sendEmptyMessageDelayed(3,100);
+							mHandler.sendEmptyMessage(3);
 							break;
 						case MotionEvent.ACTION_UP:
+							isRecording = false;
 							mHandler.removeMessages(3);
 							mHandler.removeMessages(4);
 							if(rec)
@@ -1259,10 +1276,11 @@ public class FFmpegRecorderActivity extends Activity implements TextureView.Surf
 				topLayout.setVisibility(View.GONE);
 				preview_video_parent.setVisibility(View.VISIBLE);
 				startBtn.setVisibility(View.GONE);
-				tvRecordesDes.setVisibility(View.GONE);
 				replayBtn.setVisibility(View.VISIBLE);
 				topLayout.setVisibility(View.GONE);
-				btnLayout.setVisibility(View.VISIBLE);
+				cancelBtn.setVisibility(View.VISIBLE);
+				confirmBtn.setVisibility(View.VISIBLE);
+				progressLayout.setVisibility(View.GONE);
 //				Intent intent = new Intent(this,FFmpegPreviewActivity.class);
 //				intent.putExtra("path", strVideoPath);
 //				intent.putExtra("imagePath", imagePath);
