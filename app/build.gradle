@@ -20,7 +20,10 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
+    compile fileTree(include: '*.jar', dir: 'libs')
 
-    compile group: 'org.bytedeco', name: 'javacv', version: '1.0'
-    compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '2.7.1-1.0', classifier: 'android-arm'
+//    compile group: 'org.bytedeco', name: 'javacv', version: '1.0'
+//    compile group: 'org.bytedeco', name: 'javacpp', version: '1.0'
+//    compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '2.7.1-1.0'
+//    compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '2.7.1-1.0', classifier: 'android-arm'
 }
